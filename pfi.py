@@ -10,9 +10,29 @@ def menu():
     print("6. Lista de productos con cantidad bajo minimo")
     print("7. Salir")
     
+
+#------------funcion para rellono de grilla-------------
+def rellenoGrilla(cadena,anchoColumna):        
+    return f"{cadena}{' ' * (anchoColumna - len(cadena))}"
+        
 #-----------------------ALTA PRODUCTO-------------------    
-def alta():
-    pass
+def alta(productos):
+    id=len(productos)+1
+    nombre=input("Ingrese el nombre del producto: ")
+    precio = float(input("Ingrese el precio unitario:"))
+    stock = int(input("Ingrese la cantidad: "))
+    minimo = int(input("Ingrese Stock mínimo: "))
+    
+    producto ={
+    "id":id,
+    "nombre":nombre,
+    "precio":precio,
+    "stock":stock,
+    "minimo":minimo,
+    "activo":True
+    
+        }
+    productos.append(producto)
 
 #---------------------CONSULTAR PRODUCTO----------------    
 def consulta():
@@ -27,23 +47,41 @@ def baja():
     pass
 
 #------------------LISTAR PRODUCTOS-----------------------    
-def listarProductos():
-    pass
+def listarProductos(productos):
+    for producto in productos:
+        print("-"*75)
+        print((f"{producto['id']}\t"
+              f"{rellenoGrilla(producto['nombre'],40)}\t"
+              f"{rellenoGrilla(str(producto['precio']),10)}\t"
+              f"{producto['stock']}\t"
+              ))    
+    print("-"*75)
 
 #--------------------LISTAR STOCK MINIMO------------------    
 def listarStockMinimo():
     pass
    
 ###############CURPO PRINCIPAL DEL PROGRAMA###################
+productos = []
+producto ={
+    "id":1,
+    "nombre":"Pantalones",
+    "precio":1000,
+    "stock":10,
+    "minimo":2,
+    "activo":True
+    
+}
+productos.append(producto)
 
-
+print(productos)
 fin = True
 while fin:
     menu()
     opcion = int(input("Ingrese la opción deseada: "))
     match opcion:
         case 1:
-            alta()
+            alta(productos)
         case 2:
             consulta()
         case 3:
@@ -51,7 +89,7 @@ while fin:
         case 4:
             baja()
         case 5:
-            listarProductos()
+            listarProductos(productos)
         case 6:
             listarStockMinimo()
         case 7:
