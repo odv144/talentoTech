@@ -40,21 +40,41 @@ def consulta():
     pass
 
 #--------------------MODIFICACION DE PRODUCTO------------    
-def modificacion():
+def modificacion(productos):
     #esta lista debe ser la general la modificacion debe ser ingresada luego de seleccionar
     #el item por cual se realiza la busqueda
-
-    productos = [{"id":1,"nombre":"SSD de 240GB","precio":25600,"stock":5},{"id":3,"nombre":"SSD de 240GB","precio":25600,"stock":5},{"id":2,"nombre":"MOTHER A320H-M","precio":35600,"stock":2}]
-    
-    valor="SSD "
+    valor=input("Valor para buscar el nombre: ")
     response=buscarProducto(productos,valor)
-    campo=0
-    for producto in response:
-        print(producto)
-        for key,values in producto.items():
-            print(f"{campo}:para {key}")
-            campo+=1
+    print(producto)
+    flag=True
+    while flag:
+        for key,values in enumerate(producto):
+            print(f"{key}:para {values}")
+      
+        print(f"99 : para Salir")
         opc = int(input("Ingrese el número del campo a cambiar: "))
+            
+        match opc:
+                case 0:
+                    producto[0]=int(input("Ingrese el nuevo id: "))
+                case 1:
+                    producto[1]=input("Ingrese el nuevo nombre: ")
+                case 2:
+                    producto[2]=float(input("Ingrese el nuevo precio: "))
+                case 3:
+                    producto[3]=int(input("Ingrese el nuevo stock: "))
+                case 4:
+                    producto[4]=int(input("Ingrese el nuevo minimo: "))
+                case 5:
+                    producto[5]=input("Activar producto 'S' o 'N': ")
+                    estado = producto[5].upper()=='S'
+                    producto[5]=estado
+                case 99:
+                    flag=False
+                case _:
+                    print("Opción no válida")
+                    
+                    
     else:
         print(f"El producto con nombre: {valor} no fue encontrado")
     #if producto['nombre']==search:
@@ -62,10 +82,17 @@ def modificacion():
 #-------------------BUSCAR PRODUCTO POR CAMPO-------------    
 def buscarProducto(lista,valor):
     resultado = []
+    #Busca los productos que coinciden con el valor
     for producto in lista:
         if(re.search(valor,producto['nombre'],re.IGNORECASE)):
             resultado.append(producto)
-    return resultado
+    for indice,elemento in enumerate(resultado):
+        print(f"{indice}-{elemento}")
+    opc = int(input("Ingrese el indice del producto que desea modificar: "))
+    if opc!="salir":
+        return resultado[opc]
+    else:
+        return 0
     
 #-------------------ELIMINICION DE PRODUCTO---------------    
 def baja():
@@ -87,7 +114,8 @@ def listarStockMinimo():
     pass
    
 ###############CURPO PRINCIPAL DEL PROGRAMA###################
-productos = []
+productos = [{"id":1,"nombre":"SSD de 480GB","precio":52600,"stock":4,"minimo":1,"activo":False},{"id":3,"nombre":"SSD de 240GB","precio":25600,"stock":5},{"id":2,"nombre":"MOTHER A320H-M","precio":35600,"stock":2,"minimo":2,"activo":False}]
+
 producto ={
     "id":1,
     "nombre":"Pantalones",
@@ -110,7 +138,7 @@ while fin:
         case 2:
             consulta()
         case 3:
-            modificacion()
+            modificacion(productos)
         case 4:
             baja()
         case 5:
