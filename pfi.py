@@ -1,3 +1,4 @@
+import re
 #-------------------------MENU--------------------------    
 def menu():
     print("### Menú de Opciones ####")
@@ -40,8 +41,32 @@ def consulta():
 
 #--------------------MODIFICACION DE PRODUCTO------------    
 def modificacion():
-    pass
+    #esta lista debe ser la general la modificacion debe ser ingresada luego de seleccionar
+    #el item por cual se realiza la busqueda
 
+    productos = [{"id":1,"nombre":"SSD de 240GB","precio":25600,"stock":5},{"id":3,"nombre":"SSD de 240GB","precio":25600,"stock":5},{"id":2,"nombre":"MOTHER A320H-M","precio":35600,"stock":2}]
+    
+    valor="SSD "
+    response=buscarProducto(productos,valor)
+    campo=0
+    for producto in response:
+        print(producto)
+        for key,values in producto.items():
+            print(f"{campo}:para {key}")
+            campo+=1
+        opc = int(input("Ingrese el número del campo a cambiar: "))
+    else:
+        print(f"El producto con nombre: {valor} no fue encontrado")
+    #if producto['nombre']==search:
+
+#-------------------BUSCAR PRODUCTO POR CAMPO-------------    
+def buscarProducto(lista,valor):
+    resultado = []
+    for producto in lista:
+        if(re.search(valor,producto['nombre'],re.IGNORECASE)):
+            resultado.append(producto)
+    return resultado
+    
 #-------------------ELIMINICION DE PRODUCTO---------------    
 def baja():
     pass
