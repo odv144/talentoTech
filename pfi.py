@@ -1,4 +1,5 @@
 import re
+import sqlite3
 #-------------------------MENU--------------------------    
 def menu():
     print("### Menú de Opciones ####")
@@ -88,11 +89,11 @@ def buscarProducto(lista,valor):
             resultado.append(producto)
     for indice,elemento in enumerate(resultado):
         print(f"{indice}-{elemento}")
-    opc = int(input("Ingrese el indice del producto que desea modificar: "))
+    opc = input("Ingrese el indice del producto que desea modificar o 9 para salir: ")
     if opc!="salir":
         return resultado[opc]
     else:
-        return 0
+        return 
     
 #-------------------ELIMINICION DE PRODUCTO---------------    
 def baja():
@@ -109,45 +110,119 @@ def listarProductos(productos):
               ))    
     print("-"*75)
 
-#--------------------LISTAR STOCK MINIMO------------------    
+#--------------------LISTAR STOCK MINIMO------------------   
+# **********INICIO PROCESOS DE BASE DE DATOS************************
+def menuBD():
+    print("### MENÚ de BASE DE DATOS ####")
+    print("1. Abrir base de datos")
+    print("2. Insertar un producto")
+    print("3. Consulta de datos de productos")
+    print("4 Modificar la cantidad en stock de un producto")
+    print("5. Listado completo de los productos")
+    print("6. Lista de productos con cantidad bajo minimo")
+    print("7. Dar de baja productos")
+    print("999. Salir")
+
+
+def openBD():
+    try:
+        # Intentar conectar a la base de datos existente
+        conn = sqlite3.connect("inventario.db")
+        print("Conexión establecida a la base de datos existente.")
+    except sqlite3.Error:
+        # Si ocurre un error (la base no existe), crearla
+        conn = sqlite3.connect("inventario.db")
+        print("Base de datos creada.")
+    return conn
+
+
+def crearTabla(conn):
+    try:
+        conn.cursor().execute('''
+        CREATE TABLE productos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre TEXT,
+            precio REAL,
+            stock INTEGER,
+            minimo INTEGER,
+            activo BOOLEAN
+        )
+    ''')
+        conn.commit()
+    except conn.Error:
+        print("Tabla ya existente")
+
+def insertarProducto(conn):
+    try:
+        nombre=input("Ingrese el nombre del producto: ")
+        precio = float(input("Ingrese el precio unitario:"))
+        stock = int(input("Ingrese la cantidad: "))
+        minimo = int(input("Ingrese Stock mínimo: "))
+        
+        producto =(nombre,precio,stock,minimo,True)
+        conn.cursor().execute("INSERT INTO productos (nombre, precio, stock, minimo, activo) VALUES (?, ?, ?, ?, ?)", producto)
+        conn.commit()
+        print(f"Producto {producto} agregado exitosamente")
+    except:
+        print("No se puedo insertar el registro")
+#----------------------------------------------------------------
+def consultarProductos(conn):
+    try:
+        cursor=conn.cursor()
+        cursor.execute("SELECT * FROM productos")
+        resultados = cursor.fetchall()
+
+        for fila in resultados:
+            print("Este viene de la base de datos")
+            print(fila)
+            print("----------------------")
+    except:
+        print("Error posible falla al abrir base de dato")
+# **********FIN PROCESOS DE BASE DE DATOS*************************** 
 def listarStockMinimo():
     pass
    
 ###############CURPO PRINCIPAL DEL PROGRAMA###################
-productos = [{"id":1,"nombre":"SSD de 480GB","precio":52600,"stock":4,"minimo":1,"activo":False},{"id":3,"nombre":"SSD de 240GB","precio":25600,"stock":5},{"id":2,"nombre":"MOTHER A320H-M","precio":35600,"stock":2,"minimo":2,"activo":False}]
-
-producto ={
-    "id":1,
-    "nombre":"Pantalones",
-    "precio":1000,
-    "stock":10,
-    "minimo":2,
-    "activo":True
-    
-}
-productos.append(producto)
-
-print(productos)
+# conn.close()
 fin = True
+conn=''
 while fin:
-    menu()
-    opcion = int(input("Ingrese la opción deseada: "))
-    match opcion:
+    menuBD()
+    opc=int(input("Seleccion la opcion deseada: "))
+    match opc:
         case 1:
-            alta(productos)
+            conn = openBD()
+            crearTabla(conn)
         case 2:
-            consulta()
+            insertarProducto(conn)
         case 3:
-            modificacion(productos)
-        case 4:
-            baja()
-        case 5:
-            listarProductos(productos)
-        case 6:
-            listarStockMinimo()
-        case 7:
+            consultarProductos(conn)
+
+        case 999:
             fin=False
         case _:
-            print("Opción no válida. Por favor, vuelva a intentarlo.")
+            print("Opcion no valida")
+
+conn.close()
+        
+    # menu()
+    # opcion = int(input("Ingrese la opción deseada: "))
+    # match opcion:
+    #     case 1:
+    #         alta(productos)
+    #     case 2:
+    #         consulta()
+    #     case 3:
+    #         modificacion(productos)
+    #     case 4:
+    #         baja()
+    #     case 5:
+    #         listarProductos(productos)
+    #     case 6:
+    #         listarStockMinimo()
+    #     case 7:
+    #         fin=False
+    #     case _:
+    #         print("Opción no válida. Por favor, vuelva a intentarlo.")
             
         
